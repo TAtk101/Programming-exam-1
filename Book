@@ -1,0 +1,83 @@
+import java.util.regex.Pattern;
+
+public class Book {
+    private String title;
+    private String author;
+    private String ISBN;
+
+    // Empty constructor
+    public Book() {}
+
+    // Constructor arguments
+    public Book(String title, String author, String ISBN) {
+        this.title = title;
+        this.author = author;
+        this.ISBN = ISBN;
+    }
+
+    // Getters and Setters
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
+    }
+
+    // ISBN Validation
+    public boolean validateISBN() {
+        if (ISBN.length() == 10) {
+            return validateISBN10(ISBN);
+        } else if (ISBN.length() == 13) {
+            return validateISBN13(ISBN);
+        }
+        return false;
+    }
+
+    // Validate ISBN-10
+    private boolean validateISBN10(String isbn) {
+        if (!Pattern.matches("\\d{9}[\\dX]", isbn)) return false;
+        int sum = 0;
+        for (int i = 0; i < 9; i++) {
+            sum += (10 - i) * Character.getNumericValue(isbn.charAt(i));
+        }
+        char checkChar = isbn.charAt(9);
+        int checkDigit = (checkChar == 'X') ? 10 : Character.getNumericValue(checkChar);
+        sum += checkDigit;
+        return sum % 11 == 0;
+    }
+
+    // Validate ISBN-13
+    private boolean validateISBN13(String isbn) {
+        if (!Pattern.matches("\\d{13}", isbn)) return false;
+        int sum = 0;
+        for (int i = 0; i < 12; i++) {
+            int digit = Character.getNumericValue(isbn.charAt(i));
+            sum += (i % 2 == 0) ? digit : digit * 3;
+        }
+        int checkDigit = Character.getNumericValue(isbn.charAt(12));
+        return (sum + checkDigit) % 10 == 0;
+    }
+
+    // toString method
+    @Override
+    public String toString() {
+        return "Title: " + title + ", Author: " + author + ", ISBN: " + ISBN;
+    }
+}
